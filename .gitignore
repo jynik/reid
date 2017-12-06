@@ -1,0 +1,12 @@
+*.sw[a-p]
+*~
+
+*.xml
+*.json
+
+/reid-enxml
+/reid-convert
+/reid-search
+
+/.deps
+/test

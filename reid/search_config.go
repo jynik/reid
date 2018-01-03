@@ -60,8 +60,11 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 		// Merge excess whitespace into a single space
 		t = reExtraSpace.ReplaceAllString(t, " ")
 
-		Verbosef("Converting search term \"%s\" -> regexp{%s}\n", term, t)
-		proc.queries[r+i].regexp, err = regexp.Compile(t)
+		// Match only complete words, delimited by whitespace or line endings
+		pattern := "(^| )"+t+"( |$)"
+
+		Verbosef("Converting search term \"%s\" -> regexp{%s}\n", term, pattern)
+		proc.queries[r+i].regexp, err = regexp.Compile(pattern)
 		if err != nil {
 			return procSearchConfig{}, err
 		}

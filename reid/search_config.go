@@ -61,7 +61,7 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 		t = reExtraSpace.ReplaceAllString(t, " ")
 
 		// Match only complete words, delimited by whitespace or line endings
-		pattern := "(^| )"+t+"( |$)"
+		pattern := "(^| )"+t+"(es|s)?( |$)"
 
 		Verbosef("Converting search term \"%s\" -> regexp{%s}\n", term, pattern)
 		proc.queries[r+i].regexp, err = regexp.Compile(pattern)

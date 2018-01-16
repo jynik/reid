@@ -20,7 +20,7 @@ reid-enxml: $(SRC_CMD_ENXML)
 	$(GO) build $<
 
 reid-convert: $(SRC_CMD_CONVERT)
-	$(GO) build $<
+	$(GO) build -tags ocr $<
 
 reid-search: $(SRC_CMD_SEARCH)
 	$(GO) build $<

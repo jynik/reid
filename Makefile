@@ -28,8 +28,11 @@ reid-search: $(SRC_CMD_SEARCH)
 .deps/kingpin.v2: .deps
 	$(GO) get -v gopkg.in/alecthomas/kingpin.v2 && touch $@
 
-.deps/docconv: .deps
-	$(GO) get -v github.com/sajari/docconv && touch $@
+.deps/docconv: .deps/gotesseract .deps
+	$(GO) get -v -tags ocr code.sajari.com/docconv/... && touch $@
+
+.deps/gotesseract: .deps
+	$(GO) get -v github.com/otiai10/gosseract && touch $@
 
 .deps:
 	@mkdir -p .deps

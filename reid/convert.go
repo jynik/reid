@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sajari/docconv"
+	"code.sajari.com/docconv"
 )
 
 /*

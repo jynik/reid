@@ -13,6 +13,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -249,6 +250,13 @@ func (l *xmlLoader) loadRecord() (*Record, error) {
 					internal := "internal-pdf://"
 					if strings.HasPrefix(pdf, internal) {
 						pdf = strings.Replace(pdf, internal, "", 1)
+
+						// These are escaped in the XMLs I've seen so far
+						pdf, err = url.QueryUnescape(pdf)
+						if err != nil {
+							return nil, err
+						}
+
 						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath, pdf))
 					}
 				}

@@ -264,7 +264,7 @@ func (l *xmlLoader) loadRecord() (*Record, error) {
 
 				if !complete {
 					if missing == "Title" {
-						Debug("Not including incomplete record - missing Title")
+						Debug("Not including incomplete record - missing Title\n")
 					} else {
 						Debugf("Not including incomplete record \"%s\" - missing %s\n",
 							rec.Title, missing)
@@ -380,7 +380,7 @@ func LoadRecordsFromXML(filename string, filterLangs []string) ([]Record, error)
 					Debug("Loaded record: ", rec)
 				}
 			} else {
-				Debugf("Not including due to Language=%s: %s", rec.Language, rec)
+				Debugf("Not including due to Language=%s: %s\n", rec.Language, rec)
 			}
 		}
 	}

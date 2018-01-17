@@ -257,7 +257,7 @@ func (l *xmlLoader) loadRecord() (*Record, error) {
 							return nil, err
 						}
 
-						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath, pdf))
+						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath + ".Data", "PDF", pdf))
 					}
 				}
 

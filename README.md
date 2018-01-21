@@ -17,14 +17,20 @@ the location of the "minified" text files.
 more terms specified on the command line. Simple terms and phrases can be
 specified, in addition to [Regular Expressions]. The search can be performed
 over all files contained in the "reid project" file, or limited by year range,
-author, or publication. For each matched input term, this program outputs 
+author, or publication. For each matched input term, this program outputs
 the number of occurrences observed in corresponding source material. By default,The
 information about matches are printed to the terminal. However, format of this
 output can be changed to CSV or JSON, and the data can be written to a file.
 
-These tools are intended to work on Linux and Apple OSX operating
-systems. The latter requires software obtained through [MacPorts] or
-[Homebrew].  Windows support has not been tested.
+# Requirements
+
+The following are required to build and use `reid`
+
+* Linux - Tessaract reportedly misbehaves on OSX
+* [Go] 1.7 or later. (Earlier versions have not been tested)
+* [tesseract]: `tesseract-eng`, `libtesseract`, `libtesseract-dev`
+* [poppler] utilities: `pdfimages`, `pdftohtml`
+
 
 # Workflow and Usage
 
@@ -37,7 +43,7 @@ the tools with a `--help` command line option.
 
 ## Exporting an Endnote Library as an XML file
 
-First, export entries from your EndNote library to an XML. This can be done 
+First, export entries from your EndNote library to an XML. This can be done
 via the `File > Export...` option in EndNote. In the window that appears,
 be sure to specify:
 
@@ -51,7 +57,7 @@ a subset of your library.
 
 ## Viewing an exported XML's contents
 
-While the exported XML library files are human-readable text, they a bit 
+While the exported XML library files are human-readable text, they a bit
 dense and a bit tough to review manually. The `read-enxml` program's
 "show" command can be used to summarize the contents of the XML file. For
 large library exports, it may take a few seconds to load the XML file.
@@ -109,7 +115,7 @@ $ reid-enxml -x mylib.xml show years
 ## Creating a reid project file
 
 Only a subset of information from the EndNote library XML file is required.
-Additionally, the `reid` tools need to know some information, such as 
+Additionally, the `reid` tools need to know some information, such as
 where your converted text files are (to be) stored. For that reason, a "reid
 project" file and an associated data directory must be provided.
 
@@ -139,7 +145,7 @@ on the [Issue Tracker] with respect to tuning the various "minifications"
 that are performed.
 
 The following command will convert all the PDFs associated with entries
-in the previously created project file to "minified" text, storing these    
+in the previously created project file to "minified" text, storing these
 text files in the `mydata` directory.
 
 The `--debug` argument is optional; you can specify this to view some
@@ -185,7 +191,7 @@ Query: bootloader
   Title: Inserting Backdoors Into Black Box Firmware For Fun and Profit
 ~~~
 
-But what if some works use the term "boot loader" (with a space) instead of 
+But what if some works use the term "boot loader" (with a space) instead of
 "bootloader?"  The same search can be performed, but with an additional term:
 
 ~~~
@@ -214,7 +220,7 @@ Query: bootloader
 ~~~
 
 The same search as the above can be performed using a [Regular Expression] to
-define the same desired search, using the `--regexp/-r` option instead of the 
+define the same desired search, using the `--regexp/-r` option instead of the
 `--term/-t` option:
 
 ~~~
@@ -230,7 +236,7 @@ Query: regexp{boot ?loader}
 Query: regexp{boot ?loader}
   Occurrences: 9
   Year: 1996
-  Publication: 
+  Publication:
   Author(s): Goodspeed, T. / Ridley, S. / Grand, J. / Fitz
   Title: Cross-Platform ROP Gadget Polyglots for ARM, MIPS, and PIC32
 
@@ -254,7 +260,7 @@ $ reid-search -p myproject.json -r 'architechtur(e|al)`
 
 In all liklihood, you won't want always to search the entire library.
 Instead, you might want to search articles from a specific publication,
-or over a limited number of years.  
+or over a limited number of years.
 
 The `--from/-F` and `--to/-T` arguments can be used to specify the earliest
 and latest years to include in searches.
@@ -295,18 +301,11 @@ work with the data programatically.
 For more information, run `reid-search --help`.
 
 
-# Build 
+# Build
 
 Binary releases of this software are not yet provided; the `reid` tools
 must be built from source. (You can always ask me politely for a build,
 of course!)
-
-The following are required to build and run this software:
-
-* [Go] 1.7 or later. (Earlier versions have not been tested)
-* [tesseract]
-
-If you're running OSX, you can install these via [Homebrew] or [MacPorts].
 
 Running `make` from the top-level directory will result in the `go get` calls
 needed to fetch and build dependencies.
@@ -314,7 +313,7 @@ needed to fetch and build dependencies.
 Upon completion the `reid` tools will be located in the top-level directory.
 Copy or move these into a location within your `${PATH}`.
 
-# License 
+# License
 
 This software is released under version 3.0 of the GNU General Public License.
 The text of this license may be found in the [COPYING] file.
@@ -349,7 +348,7 @@ However, the author is neither a lawyer nor an actor that plays one on TV. The
 user of this software is responsible for ensuring their usage of the `reid`
 software is consistent with the EndNote End User License Agreement.
 
-The `reid` tools were developed using a very small sample of XML files output 
+The `reid` tools were developed using a very small sample of XML files output
 by EndNote X7. It may not adequately support XML files produced by
 other versions of the software. Furthermore, the sample XML files used to
 develop these tools contained only journal articles. As such, changes may to
@@ -364,8 +363,6 @@ validity and correctness of their data and results.
 
 [EndNote]: http://endnote.com/
 [Go]: https://golang.org/
-[Homebrew]: https://brew.sh/
 [Issue Tracker]: https://github.com/jynik/reid/issues
-[MacPorts]: https://www.macports.org/
-[Regular Expressions]: https://en.wikipedia.org/wiki/Regular_expression
 [tesseract]: https://github.com/tesseract-ocr/tesseract
+[poppler]: https://poppler.freedesktop.org/releases.html

@@ -8,7 +8,7 @@ SRC_CMD_SEARCH  := cmd/reid-search.go $(SRC_CMD_COMMON) $(SRC_REID)
 # De-dup and sort
 SRC_ALL := $(sort $(SRC_CMD_ENXML) $(SRC_CMD_CONVERT) $(SRC_CMD_SEARCH) $(SRC_CMD_COMMON) $(SRC_REID))
 
-DEPS := .deps/kingpin.v2 .deps/docconv
+DEPS := .deps/kingpin.v2
 COMMANDS := reid-enxml reid-convert reid-search
 
 GO 		?= go
@@ -27,9 +27,6 @@ reid-search: $(SRC_CMD_SEARCH)
 
 .deps/kingpin.v2: .deps
 	$(GO) get -v gopkg.in/alecthomas/kingpin.v2 && touch $@
-
-.deps/docconv: .deps/gotesseract .deps
-	$(GO) get -v -tags ocr code.sajari.com/docconv/... && touch $@
 
 .deps/gotesseract: .deps
 	$(GO) get -v github.com/otiai10/gosseract && touch $@

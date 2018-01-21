@@ -8,10 +8,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"code.sajari.com/docconv"
+	"github.com/otiai10/gosseract/v1/gosseract"
 )
 
 /*
@@ -45,7 +46,7 @@ func (p *Project) Convert(records []RecordToConvert, forceConversion bool) error
 		return p.convertSubset(records, forceConversion)
 	} else {
 		var firstError error
-		for i , _ := range p.Entries {
+		for i, _ := range p.Entries {
 			err := p.convert(&p.Entries[i], forceConversion)
 			if err != nil && firstError == nil {
 				firstError = err
@@ -205,9 +206,92 @@ func (p *Project) convert(e *ProjectEntry, overwrite bool) error {
 	return firstError
 }
 
+func pdfToImages(filename string) (string, error) {
+	tmpDir, err := ioutil.TempDir("/tmp", "reid-convert-")
+	if err != nil {
+		return "", err
+	}
+
+	pfx := tmpDir + "/img"
+	err = exec.Command("pdfimages", filename, pfx).Run()
+	if err != nil {
+		os.RemoveAll(tmpDir)
+		return "", err
+	}
+
+	return tmpDir, nil
+}
+
+var supportedExts = []string{".jpg", ".tif", ".tiff", ".pbm", ".ppm", ".png"}
+
+func isSupportedImage(filename string) bool {
+	ext := filepath.Ext(filename)
+	for _, e := range supportedExts {
+		if e == ext {
+			return true
+		}
+	}
+	return false
+}
+
+// TODO Extract this from the record to convert
+const supportedLangs = "eng"
+
+func imagesToText(dir string) (string, error) {
+	var text string
+	var files []string
+
+	walk := func(filename string, info os.FileInfo, err error) error {
+		if err == nil && isSupportedImage(filename) {
+			files = append(files, filename)
+		}
+		return nil
+	}
+	filepath.Walk(dir, walk)
+
+	for _, filename := range files {
+		Debugf("Extracted text from %s\n", filename)
+		text += gosseract.Must(gosseract.Params{Src: filename, Languages: supportedLangs})
+		text += " "
+	}
+
+	return text, nil
+}
+
+// First try converting via searchable text. If this yields an empty
+// file, we probably have a PDF that's scanned images -- attempt to use OCR.
+//
+// Returns minified output and error status
+func (p *Project) convertAndMinify(filename string) ([]byte, error) {
+	output, err := exec.Command("pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", "-eol", "unix", filename, "-").Output()
+	if err != nil {
+		return []byte{}, err
+	}
+
+	minText := minify(string(output))
+	if len(minText) != 0 {
+		return minText, nil
+	}
+
+	Debug("PDF did not contain searchable text. Using OCR conversion.")
+
+	imgDir, err := pdfToImages(filename)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer os.RemoveAll(imgDir)
+
+	text, err := imagesToText(imgDir)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return minify(text), nil
+}
+
 // Returns MiniFiles entry path, error
 func (p *Project) convertPDF(filename string, e *ProjectEntry, overwrite bool) (string, error) {
-	Verbosef("Converting %s\n", filename)
+	Debugf("Converting %s\n", filename)
 
 	pdf := filepath.Base(filename)
 	subdir := filepath.Base(filepath.Dir(filename))
@@ -227,11 +311,12 @@ func (p *Project) convertPDF(filename string, e *ProjectEntry, overwrite bool) (
 	}
 
 	// Convert PDF->txt and minify it
-	res, err := docconv.ConvertPath(filename)
+	text, err := p.convertAndMinify(filename)
 	if err != nil {
 		return "", err
 	}
-	return miniFile, ioutil.WriteFile(miniFile, minify(res.Body), 0640)
+
+	return miniFile, ioutil.WriteFile(miniFile, text, 0640)
 }
 
 func minify(text string) []byte {

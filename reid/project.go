@@ -126,7 +126,7 @@ func (p *Project) scan(skipConverted bool) (*Project, error) {
 	// Does our data dir exist?
 	if _, err := os.Stat(p.DataDir); err != nil {
 		if os.IsNotExist(err) {
-			return nil, fmt.Errorf("Data directory does not exist: %s", p.DataDir)
+			return nil, fmt.Errorf("Data directory does not exist: %s\n", p.DataDir)
 		} else {
 			return nil, err
 		}
@@ -175,7 +175,7 @@ func (p *Project) scan(skipConverted bool) (*Project, error) {
 			if _, err := os.Stat(pdf); err != nil {
 				if os.IsNotExist(err) {
 					Errorf("PDF does not exist: %s\n", pdf)
-					Errorf(" `- Skipping Record: %s\n", entry.Record.String())
+					Debugf(" `- Skipping Record: %s\n", entry.Record.String())
 					skip = true
 					break
 				}

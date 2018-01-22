@@ -184,7 +184,7 @@ func (p *Project) convert(e *ProjectEntry, overwrite bool) error {
 	for _, pdf := range e.Record.PDFs {
 		miniFile, err := p.convertPDF(pdf, e, overwrite)
 		if err != nil {
-			Error(err)
+			Errorf("Failed to convert '%s' - %s\n", pdf, err)
 			if firstError != nil {
 				firstError = err
 			}
@@ -291,7 +291,7 @@ func (p *Project) convertAndMinify(filename string) ([]byte, error) {
 
 // Returns MiniFiles entry path, error
 func (p *Project) convertPDF(filename string, e *ProjectEntry, overwrite bool) (string, error) {
-	Debugf("Converting %s\n", filename)
+	Infof("Converting %s\n", filename)
 
 	pdf := filepath.Base(filename)
 	subdir := filepath.Base(filepath.Dir(filename))

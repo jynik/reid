@@ -31,7 +31,7 @@ func NewReducedStr(s string) (ReducedStr, error) {
 	r.Reduced = Reduce(s)
 
 	if len(r.String) != 0 && len(r.Reduced) == 0 {
-		err = fmt.Errorf("Reducing \"%s\" results in an empty string", s)
+		err = fmt.Errorf("Reducing \"%s\" results in an empty string\n", s)
 	}
 
 	return r, err

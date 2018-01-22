@@ -251,11 +251,19 @@ func (l *xmlLoader) loadRecord() (*Record, error) {
 					if strings.HasPrefix(pdf, internal) {
 						pdf = strings.Replace(pdf, internal, "", 1)
 
+						// QueryUnescape will turn '+' in filenames into spaces,
+						// which is not desirable. As hack, we'll replace it with a marker
+						// and then swap it back out...
+						pdf = strings.Replace(pdf, "+", "__REIDPLUS__", -1)
+
 						// These are escaped in the XMLs I've seen so far
 						pdf, err = url.QueryUnescape(pdf)
 						if err != nil {
 							return nil, err
 						}
+
+						// Reintroduce those crazy '+' characters...
+						pdf = strings.Replace(pdf, "__REIDPLUS__", "+", -1)
 
 						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath + ".Data", "PDF", pdf))
 					}

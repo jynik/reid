@@ -22,20 +22,28 @@ the number of occurrences observed in corresponding source material. By default,
 information about matches are printed to the terminal. However, format of this
 output can be changed to CSV or JSON, and the data can be written to a file.
 
+[EndNote]: http://endnote.com/
+[Regular Expressions]: https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
+
 # Requirements
 
 The following are required to build and use `reid`
 
-* Linux - Tessaract reportedly misbehaves on OSX
+* Linux - Tessaract reportedly misbehaves on OSX, which has not been tested.
 * [Go] 1.7 or later. (Earlier versions have not been tested)
 * [tesseract]: `tesseract-eng`, `libtesseract`, `libtesseract-dev`
 * [poppler] utilities: `pdfimages`, `pdftohtml`
 
 
+[Go]: https://golang.org/
+[tesseract]: https://github.com/tesseract-ocr/tesseract
+[poppler]: https://poppler.freedesktop.org/releases.html
+
+
 # Workflow and Usage
 
 In general, one uses the `reid` tools in the order listed above. This section
-briefly explains how to use the tools. Information on building the tools from
+briefly explains how to use the tools. Information about building the tools from
 source is shown in a later section.
 
 For additional usage information, such as available flags and arguments, run
@@ -58,7 +66,7 @@ a subset of your library.
 ## Viewing an exported XML's contents
 
 While the exported XML library files are human-readable text, they a bit
-dense and a bit tough to review manually. The `read-enxml` program's
+dense and a bit tough to review manually. The `reid-enxml` program's
 "show" command can be used to summarize the contents of the XML file. For
 large library exports, it may take a few seconds to load the XML file.
 
@@ -144,6 +152,8 @@ with your ability to search a document, please submit a feature request
 on the [Issue Tracker] with respect to tuning the various "minifications"
 that are performed.
 
+[Issue Tracker]: https://github.com/jynik/reid/issues
+
 The following command will convert all the PDFs associated with entries
 in the previously created project file to "minified" text, storing these
 text files in the `mydata` directory.
@@ -180,7 +190,7 @@ Query: bootloader
   Occurrences: 7
   Year: 2015
   Publication: The Journal Of The Internet Of Things That Shouldn't Be
-  Author(s): Goodspeed, T. / Ridley, S. / Grand, J. / Fitz
+  Author(s): Goodspeed, T. / Ridley, S. / Grand, J. / Fitz, J.
   Title: Cross-Platform ROP Gadget Polyglots for ARM, MIPS, and PIC32
 
 Query: bootloader
@@ -255,8 +265,17 @@ of similar terms or phrases. For example, the following will report the total
 number of occurrences of either "architecture" or "architectural".
 
 ~~~
-$ reid-search -p myproject.json -r 'architechtur(e|al)`
+$ reid-search -p myproject.json -r 'architechtur(e|al)'
 ~~~
+
+When using regular expressions, be aware that it's up to you to specify
+where whitespace or the beginning/end of a document may occur. In the
+previous example, results for "microarchitecure" or "architecure-independent"
+would be included. If you only want an exact match for "architecture" then
+you would need to specify `(^| )architecture( |$)`.  In fact, this is 
+exactly what the `-t/--term` option is doing with the provided text.
+(Remember, the minified text is converted to lower case and all white space
+is converted to a single space ' ' character.)
 
 In all liklihood, you won't want always to search the entire library.
 Instead, you might want to search articles from a specific publication,
@@ -359,10 +378,3 @@ Finally, the `reid` tools were developed on best-effort basis. The author
 takes no responsibility for, and makes no guarantees of, the correctness of the
 data output by these tools. Users are ultimately responsible for ensuring the
 validity and correctness of their data and results.
-
-
-[EndNote]: http://endnote.com/
-[Go]: https://golang.org/
-[Issue Tracker]: https://github.com/jynik/reid/issues
-[tesseract]: https://github.com/tesseract-ocr/tesseract
-[poppler]: https://poppler.freedesktop.org/releases.html

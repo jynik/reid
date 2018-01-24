@@ -32,7 +32,7 @@ The following are required to build and use `reid`
 * Linux - Tessaract reportedly misbehaves on OSX, which has not been tested.
 * [Go] 1.7 or later. (Earlier versions have not been tested)
 * [tesseract]: `tesseract-eng`, `libtesseract`, `libtesseract-dev`
-* [poppler] utilities: `pdfimages`, `pdftohtml`
+* [poppler] utilities: `pdfimages`, `pdftotext`
 
 
 [Go]: https://golang.org/

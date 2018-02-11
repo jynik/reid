@@ -192,9 +192,7 @@ func (p *Project) convert(e *ProjectEntry, forceOCR, overwrite bool) error {
 				firstError = err
 			}
 		} else {
-			if len(miniFile) != 0 {
-				miniFiles = append(miniFiles, miniFile)
-			}
+			miniFiles = append(miniFiles, miniFile)
 		}
 	}
 
@@ -312,7 +310,7 @@ func (p *Project) convertPDF(filename string, e *ProjectEntry, forceOCR, overwri
 	// Only overwrite the file if requested
 	if _, err := os.Stat(miniFile); !os.IsNotExist(err) && !overwrite {
 		Debugf("%s already exists and an overwrite wasn't requested.\n", miniFile)
-		return "", nil
+		return miniFile, nil
 	}
 
 	// Convert PDF->txt and minify it

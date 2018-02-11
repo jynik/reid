@@ -37,17 +37,20 @@ func (r *RecordToConvert) String() string {
  * Convert one or more PDF tiles to minified text files. If `records` contains
  * zero entries, all unconverted PDF files will be processed.
  *
+ * If the `forceOCR` flag is set, the conversion will be perfomed using OCR, instead
+ * of first trying to extract searchable text.
+ *
  * If the `forceConversion` flag is specified, this will force specified
  * (including when "all" is implicitly by a zero-length `records`) PDFs to be
  * converted, even if a minified text file is already present.
  */
-func (p *Project) Convert(records []RecordToConvert, forceConversion bool) error {
+func (p *Project) Convert(records []RecordToConvert, forceOCR, forceConversion bool) error {
 	if len(records) != 0 {
-		return p.convertSubset(records, forceConversion)
+		return p.convertSubset(records, forceOCR, forceConversion)
 	} else {
 		var firstError error
 		for i, _ := range p.Entries {
-			err := p.convert(&p.Entries[i], forceConversion)
+			err := p.convert(&p.Entries[i], forceOCR, forceConversion)
 			if err != nil && firstError == nil {
 				firstError = err
 			}
@@ -64,7 +67,7 @@ func (p *Project) Convert(records []RecordToConvert, forceConversion bool) error
 	}
 }
 
-func (p *Project) convertSubset(records []RecordToConvert, forceConversion bool) error {
+func (p *Project) convertSubset(records []RecordToConvert, forceOCR, forceConversion bool) error {
 	var firstError error
 	entries, err := p.aggregateConversionList(records)
 	if err != nil {
@@ -72,7 +75,7 @@ func (p *Project) convertSubset(records []RecordToConvert, forceConversion bool)
 	}
 
 	for _, entry := range entries {
-		err := p.convert(entry, forceConversion)
+		err := p.convert(entry, forceOCR, forceConversion)
 		if err != nil && firstError == nil {
 			// Report the first error we encounter, but keep chugging along
 			firstError = err
@@ -178,11 +181,11 @@ func (p *Project) aggregateConversionList(records []RecordToConvert) (pEntryList
 	return convSet.entries, nil
 }
 
-func (p *Project) convert(e *ProjectEntry, overwrite bool) error {
+func (p *Project) convert(e *ProjectEntry, forceOCR, overwrite bool) error {
 	var firstError error
 	var miniFiles []string = make([]string, 0, len(e.Record.PDFs))
 	for _, pdf := range e.Record.PDFs {
-		miniFile, err := p.convertPDF(pdf, e, overwrite)
+		miniFile, err := p.convertPDF(pdf, e, forceOCR, overwrite)
 		if err != nil {
 			Errorf("Failed to convert '%s' - %s\n", pdf, err)
 			if firstError != nil {
@@ -262,18 +265,20 @@ func imagesToText(dir string) (string, error) {
 // file, we probably have a PDF that's scanned images -- attempt to use OCR.
 //
 // Returns minified output and error status
-func (p *Project) convertAndMinify(filename string) ([]byte, error) {
-	output, err := exec.Command("pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", "-eol", "unix", filename, "-").Output()
-	if err != nil {
-		return []byte{}, err
-	}
+func (p *Project) convertAndMinify(filename string, forceOCR bool) ([]byte, error) {
+	if !forceOCR {
+		output, err := exec.Command("pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", "-eol", "unix", filename, "-").Output()
+		if err != nil {
+			return []byte{}, err
+		}
 
-	minText := minify(string(output))
-	if len(minText) != 0 {
-		return minText, nil
-	}
+		minText := minify(string(output))
+		if len(minText) != 0 {
+			return minText, nil
+		}
 
-	Debug("PDF did not contain searchable text. Using OCR conversion.")
+		Debug("PDF did not contain searchable text. Using OCR conversion.")
+	}
 
 	imgDir, err := pdfToImages(filename)
 	if err != nil {
@@ -290,7 +295,7 @@ func (p *Project) convertAndMinify(filename string) ([]byte, error) {
 }
 
 // Returns MiniFiles entry path, error
-func (p *Project) convertPDF(filename string, e *ProjectEntry, overwrite bool) (string, error) {
+func (p *Project) convertPDF(filename string, e *ProjectEntry, forceOCR, overwrite bool) (string, error) {
 	Infof("Converting %s\n", filename)
 
 	pdf := filepath.Base(filename)
@@ -311,7 +316,7 @@ func (p *Project) convertPDF(filename string, e *ProjectEntry, overwrite bool) (
 	}
 
 	// Convert PDF->txt and minify it
-	text, err := p.convertAndMinify(filename)
+	text, err := p.convertAndMinify(filename, forceOCR)
 	if err != nil {
 		return "", err
 	}

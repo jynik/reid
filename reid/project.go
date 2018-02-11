@@ -15,6 +15,15 @@ import (
 	"time"
 )
 
+// If a minified file contains <= <threshold> perform OCR on it.
+// We've been finding that some documents are prepended with some
+// metadata (e.g., interlibrary loan info) that IS searchable,
+// while the actual material IS NOT searchable. As a result,
+// reid has been scraping the metadata and missing the desired content.
+// To work around this, we'll re-convert using OCR if scraping
+// searchable text yielded a "low" character count.
+const shortMiniTextThreshold = 2000
+
 type Project struct {
 	filename	string
 
@@ -153,18 +162,20 @@ func (p *Project) scan(skipConverted bool) (*Project, error) {
 
 	for i, entry := range p.Entries {
 		// Do we already have minified text files for this record?
-		if !skipConverted && len(entry.MiniFiles) != 0 {
+		if len(entry.MiniFiles) != 0 {
 			haveAll := true
 			for _, f := range entry.MiniFiles {
-				if _, err := os.Stat(f); err != nil {
+				if fileInfo, err := os.Stat(f); err != nil {
 					haveAll = false
 					break
+				} else if fileInfo.Size() <= shortMiniTextThreshold {
+					Warn("Minified file is suspiciously small. Consider forcing a reconversion using OCR for:")
+					Warnf(" Title: %s  / Hash: %s\n", entry.Record.Title, entry.Hash)
 				}
-				continue
 			}
 
-			if haveAll {
-				Debugf("Skipping record because MiniFiles aleady exist for { %s }\n", entry.Record)
+			if skipConverted && haveAll {
+				Debugf("Skipping record because MiniFiles already exist for { %s }\n", entry.Record)
 				continue
 			}
 		}

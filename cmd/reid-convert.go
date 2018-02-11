@@ -33,6 +33,17 @@ var (
 		Required().
 		String()
 
+	ocr = kingpin.
+		Flag("ocr",
+			"Force the use of OCR when converting a document. Use this if " +
+			"you find that a document contains unsearchable text. This will " +
+			"ensure reid-convert attempts to scrape all text, rather than " +
+			"just a cover page or copyright statement prepended to the " +
+			"actual material.").
+
+		Short('o').
+		Bool()
+
 	force = kingpin.
 		Flag("force",
 			"Force conversion of a record, even if minified text already " +
@@ -120,7 +131,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = project.Convert(records, *force)
+	err = project.Convert(records, *ocr, *force)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err)
 		os.Exit(2)

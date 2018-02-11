@@ -16,6 +16,7 @@ var LogLevel int = LogLevelInfo
 const (
 	LogLevelSilent = iota
 	LogLevelError
+	LogLevelWarning
 	LogLevelInfo
 	LogLevelDebug
 	LogLevelVerbose
@@ -24,6 +25,7 @@ const (
 var prefix = [...]string{
 	"",
 	"[Error]   ",
+	"[Warning] ",
 	"[Info]    ",
 	"[Debug]   ",
 	"[Verbose] ",
@@ -35,6 +37,14 @@ func Errorf(format string, v ...interface{}) {
 
 func Error(v ...interface{}) {
 	println(LogLevelError, v...)
+}
+
+func Warnf(format string, v ...interface{}) {
+	printf(LogLevelWarning, format, v...)
+}
+
+func Warn(v ...interface{}) {
+	println(LogLevelWarning, v...)
 }
 
 func Infof(format string, v ...interface{}) {

@@ -271,11 +271,16 @@ func (p *Project) convertAndMinify(filename string, forceOCR bool) ([]byte, erro
 		}
 
 		minText := minify(string(output))
-		if len(minText) != 0 {
+		textLen := len(minText)
+		if textLen == 0 {
+			Debug("PDF did not contain searchable text. Using OCR conversion.")
+		} else if textLen <= shortMiniTextThreshold {
+			Debugf("Conversion yielded suspiciously low character count (%d). Trying OCR instead...\n", textLen)
+		} else {
+			Verbosef("Collected %d characters of searchable text.\n", textLen)
 			return minText, nil
 		}
 
-		Debug("PDF did not contain searchable text. Using OCR conversion.")
 	}
 
 	imgDir, err := pdfToImages(filename)

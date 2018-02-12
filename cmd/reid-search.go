@@ -137,7 +137,7 @@ func main() {
 		reid.LogLevel = reid.LogLevelDebug
 	}
 
-	project, err := reid.LoadProject(*projectFile, true)
+	project, err := reid.LoadProject(*projectFile)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(2)

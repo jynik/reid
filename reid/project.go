@@ -109,7 +109,7 @@ func (p *Project) Save(filename string) error {
 	return enc.Encode(p)
 }
 
-func LoadProject(filename string, skipConverted bool) (*Project, error) {
+func LoadProject(filename string) (*Project, error) {
 	var project = new(Project)
 	project.filename = filename
 
@@ -125,12 +125,12 @@ func LoadProject(filename string, skipConverted bool) (*Project, error) {
 		return nil, err
 	}
 
-	return project.scan(skipConverted)
+	return project.scan()
 }
 
 // Sanity check the state of the project, report and drop bad entries,
 // and populate look-up tables
-func (p *Project) scan(skipConverted bool) (*Project, error) {
+func (p *Project) scan() (*Project, error) {
 
 	// Does our data dir exist?
 	if _, err := os.Stat(p.DataDir); err != nil {
@@ -161,22 +161,15 @@ func (p *Project) scan(skipConverted bool) (*Project, error) {
 	p.pubs = make([]ReducedStr, 0, len(p.Entries))
 
 	for i, entry := range p.Entries {
-		// Do we already have minified text files for this record?
+		// Look for suspicious minifiles that might indicate bad conversion
 		if len(entry.MiniFiles) != 0 {
-			haveAll := true
 			for _, f := range entry.MiniFiles {
-				if fileInfo, err := os.Stat(f); err != nil {
-					haveAll = false
-					break
-				} else if fileInfo.Size() <= shortMiniTextThreshold {
+				if fileInfo, err := os.Stat(f); err == nil {
+				    if fileInfo.Size() <= shortMiniTextThreshold {
 					Warn("Minified file is suspiciously small. Consider forcing a reconversion using OCR for:")
 					Warnf(" Title: %s  / Hash: %s\n", entry.Record.Title, entry.Hash)
+				    }
 				}
-			}
-
-			if skipConverted && haveAll {
-				Debugf("Skipping record because MiniFiles already exist for { %s }\n", entry.Record)
-				continue
 			}
 		}
 

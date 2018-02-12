@@ -125,7 +125,7 @@ func main() {
 		records = append(records, reid.RecordToConvert{Hash:hash})
 	}
 
-	project, err := reid.LoadProject(*projectFile, true)
+	project, err := reid.LoadProject(*projectFile)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err)
 		os.Exit(1)

@@ -343,6 +343,9 @@ func minify(text string) []byte {
 	// Remove punctuation that might get in our way
 	text = rePunc.ReplaceAllString(text, "")
 
+	// Remove quotes that can interfere with queries
+	text = reQuotes.ReplaceAllString(text, "")
+
 	// Remove excessive whitespace
 	text = reExtraSpace.ReplaceAllString(text, " ")
 

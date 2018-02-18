@@ -16,6 +16,7 @@ var reNonAlnumSpace = regexp.MustCompile(`[^a-zA-Z0-9 ]+`)
 var reUrl = regexp.MustCompile(`(https?://|www.)[a-zA-Z0-9./]+`) // TODO DOI
 var reRefs = regexp.MustCompile(`\[[0-9]+\]`)
 var rePunc = regexp.MustCompile(`[.:;,()]`)
+var reQuotes = regexp.MustCompile(`["'‘’]`)
 var reHyphenation = regexp.MustCompile(`-\s*\r?\n\s`)
 var reNewlines = regexp.MustCompile(`\r?\n`)
 var reExtraSpace = regexp.MustCompile(` +`)

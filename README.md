@@ -337,6 +337,8 @@ Copy or move these into a location within your `${PATH}`.
 This software is released under version 3.0 of the GNU General Public License.
 The text of this license may be found in the [COPYING] file.
 
+[COPYING]: ./COPYING
+
 # Support (or, Lack Thereof)
 
 This software is developed and maintained on an as-needed basis, in the

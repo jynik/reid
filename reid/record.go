@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
  * SPDX License Identifier: GPL-3.0
  *
+ * Record data structure
  */
+
 package reid
 
 import (

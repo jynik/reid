@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
  * SPDX License Identifier: GPL-3.0
  *
  * reid-enxml: Load and extract data from EndNote XML files
@@ -62,6 +62,7 @@ var (
 
 	debug   = kingpin.Flag(c.FLAG_DEBUG, c.FLAG_DEBUG_DESC).Bool()
 	verbose = kingpin.Flag(c.FLAG_VERBOSE, c.FLAG_VERBOSE_DESC).Bool()
+	version = kingpin.Flag(c.FLAG_VERSION, c.FLAG_VERSION_DESC).Bool()
 
 	// show <title|publication|year|author|language|pdf>
 	cmdShow = kingpin.Command(CMD_SHOW, CMD_SHOW_DESC)
@@ -169,7 +170,7 @@ func main() {
 	var show showFunc
 	var records []reid.Record
 
-	cmd := kingpin.Parse()
+	cmd := c.ParseCommandLine()
 
 	if *verbose {
 		reid.LogLevel = reid.LogLevelVerbose

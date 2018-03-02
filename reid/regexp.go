@@ -1,12 +1,14 @@
 /*
-* Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
-* SPDX License Identifier: GPL-3.0
-*
-* Regular expressions used through the package
-*/
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * SPDX License Identifier: GPL-3.0
+ *
+ * Regular expressions used through the package
+ */
 package reid
 
-import("regexp")
+import (
+	"regexp"
+)
 
 var reNonAlnum = regexp.MustCompile(`[^a-zA-Z0-9]+`)
 var reNonAlnumSpace = regexp.MustCompile(`[^a-zA-Z0-9 ]+`)
@@ -20,4 +22,3 @@ var reQuotes = regexp.MustCompile(`["'‘’]`)
 var reHyphenation = regexp.MustCompile(`-\s*\r?\n\s`)
 var reNewlines = regexp.MustCompile(`\r?\n`)
 var reExtraSpace = regexp.MustCompile(` +`)
-

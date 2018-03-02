@@ -1,30 +1,32 @@
 /*
-* Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
-* SPDX License Identifier: GPL-3.0
-*
-* Search result object
-*/
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * SPDX License Identifier: GPL-3.0
+ *
+ * Search result object
+ */
+
 package reid
+
 import (
 	"fmt"
 	"strings"
 )
 
 type SearchResult struct {
-	Query		string
+	Query       string
 	Occurrences int
-	Record		Record
+	Record      Record
 }
 
 func (r SearchResult) Pretty(eol string) string {
 	return fmt.Sprintf(
-		"Query: %s\n" +
-		"   Occurrences: %d\n" +
-		"   Year:        %d\n" +
-		"   Publication: %s\n" +
-		"   Author(s):   %s\n" +
-		"   Title:       %s\n" +
-		"%s%s",
+		"Query: %s\n"+
+			"   Occurrences: %d\n"+
+			"   Year:        %d\n"+
+			"   Publication: %s\n"+
+			"   Author(s):   %s\n"+
+			"   Title:       %s\n"+
+			"%s%s",
 		r.Query,
 		r.Occurrences,
 		r.Record.Year,
@@ -40,12 +42,12 @@ func (r SearchResult) PrettyBytes(eol string) []byte {
 
 func SearchResultCSVHeader(sep, eol string) string {
 	return fmt.Sprintf(
-		"Query%s" +
-		"Occurrences%s" +
-		"Year%s" +
-		"Publication%s" +
-		"Author(s)%s" +
-		"Title%s",
+		"Query%s"+
+			"Occurrences%s"+
+			"Year%s"+
+			"Publication%s"+
+			"Author(s)%s"+
+			"Title%s",
 		sep, sep, sep, sep, sep, eol)
 }
 
@@ -56,12 +58,12 @@ func SearchResultCSVHeaderBytes(sep, eol string) []byte {
 func (r SearchResult) CSV(sep, eol string) string {
 	authors := strings.Join(r.Record.Authors, " / ")
 	return fmt.Sprintf(
-		`"%s"%s` +	// Query
-		`"%d"%s` +	// Occurrences
-		`"%d"%s` +	// Year
-		`"%s"%s` +	// Publication
-		`"%s"%s` +	// Author(s)
-		`"%s"%s`,	// Title
+		`"%s"%s`+ // Query
+			`"%d"%s`+ // Occurrences
+			`"%d"%s`+ // Year
+			`"%s"%s`+ // Publication
+			`"%s"%s`+ // Author(s)
+			`"%s"%s`, // Title
 		r.Query, sep,
 		r.Occurrences, sep,
 		r.Record.Year, sep,

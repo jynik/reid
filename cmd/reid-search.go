@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
  * SPDX License Identifier: GPL-3.0
  *
  * reid-search: Search for terms within converted records
@@ -22,9 +22,10 @@ import (
 )
 
 type ResultFormat int
+
 const (
 	FormatInvalid = -1
-	FormatPretty = iota
+	FormatPretty  = iota
 	FormatCSV
 	FormatHeaderlessCSV
 	FormatJSON
@@ -32,18 +33,14 @@ const (
 
 var (
 	projectFile = kingpin.
-		Flag(c.FLAG_PROJECT, c.FLAG_PROJECT_DESC).
-		Short(c.FLAG_PROJECT_SHORT).
-		Required().
-		String()
+			Flag(c.FLAG_PROJECT, c.FLAG_PROJECT_DESC).
+			Short(c.FLAG_PROJECT_SHORT).
+			Required().
+			String()
 
-	debug = kingpin.
-		Flag(c.FLAG_DEBUG, c.FLAG_DEBUG_DESC).
-		Bool()
-
-	verbose = kingpin.
-		Flag(c.FLAG_VERBOSE, c.FLAG_VERBOSE_DESC).
-		Bool()
+	debug   = kingpin.Flag(c.FLAG_DEBUG, c.FLAG_DEBUG_DESC).Bool()
+	verbose = kingpin.Flag(c.FLAG_VERBOSE, c.FLAG_VERBOSE_DESC).Bool()
+	version = kingpin.Flag(c.FLAG_VERSION, c.FLAG_VERSION_DESC).Bool()
 )
 
 func validateFormat(s string) ResultFormat {
@@ -77,13 +74,13 @@ func main() {
 	var eol = "\n"
 
 	kingpin.
-		Flag("term", "Search for the specified term or phrase. " +
-					 "May be specified multiple times.").
+		Flag("term", "Search for the specified term or phrase. "+
+			"May be specified multiple times.").
 		Short('t').
 		StringsVar(&searchConfig.Terms)
 
 	kingpin.
-		Flag("regexp", "Search for matches to the provided regular expression. " +
+		Flag("regexp", "Search for matches to the provided regular expression. "+
 			"May be specified multiple times.").
 		Short('r').
 		StringsVar(&searchConfig.Regexps)
@@ -101,13 +98,13 @@ func main() {
 		IntVar(&searchConfig.End)
 
 	kingpin.
-		Flag("author", "Limit search to specified author. " +
+		Flag("author", "Limit search to specified author. "+
 			"May be specified multiple times to expand search to multiple authors.").
 		Short('a').
 		StringsVar(&searchConfig.Authors)
 
 	kingpin.
-		Flag("publication", "Limit search to specified publication. " +
+		Flag("publication", "Limit search to specified publication. "+
 			"May be specified multiple times to expand search to multiple publications.").
 		Short('P').
 		StringsVar(&searchConfig.Publications)
@@ -119,12 +116,13 @@ func main() {
 		StringVar(&formatStr)
 
 	kingpin.
-		Flag("outfile", "File to write results to. " +
+		Flag("outfile", "File to write results to. "+
 			"Standard out is used if this is not specified.").
 		Short('o').
 		StringVar(&outfilename)
 
-	kingpin.Parse()
+	c.ParseCommandLine()
+
 	format := validateFormat(formatStr)
 	if format == FormatInvalid {
 		fmt.Fprintf(os.Stderr, "Invalid result format: %s\n", formatStr)
@@ -172,7 +170,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	for _, result := range(results) {
+	for _, result := range results {
 		var data []byte
 
 		switch format {

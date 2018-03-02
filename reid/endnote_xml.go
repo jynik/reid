@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
  * SPDX License Identifier: GPL-3.0
  *
  * EndNote XML "parsing". Developed against EndNode X7, and only scrapes
@@ -12,8 +12,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"io"
-	"os"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -265,7 +265,7 @@ func (l *xmlLoader) loadRecord() (*Record, error) {
 						// Reintroduce those crazy '+' characters...
 						pdf = strings.Replace(pdf, "__REIDPLUS__", "+", -1)
 
-						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath + ".Data", "PDF", pdf))
+						rec.PDFs = append(rec.PDFs, filepath.Join(dbPath+".Data", "PDF", pdf))
 					}
 				}
 

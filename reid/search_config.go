@@ -1,9 +1,10 @@
 /*
-* Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
-* SPDX License Identifier: GPL-3.0
-*
-* Search configuration
-*/
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * SPDX License Identifier: GPL-3.0
+ *
+ * Search configuration
+ */
+
 package reid
 
 import (
@@ -14,23 +15,23 @@ import (
 
 // Caller-provided search configuration
 type SearchConfig struct {
-	Terms	[]string
-	Regexps []string
-	Authors	[]string
+	Terms        []string
+	Regexps      []string
+	Authors      []string
 	Publications []string
-	Start	int
-	End		int
+	Start        int
+	End          int
 }
 
 type query struct {
-	orig	string			// Regexp pattern or search term
-	regexp	*regexp.Regexp	// Compiled regular expression
+	orig   string         // Regexp pattern or search term
+	regexp *regexp.Regexp // Compiled regular expression
 }
 
 // Processed search configuration
 type procSearchConfig struct {
-	queries	[]query
-	authors []string
+	queries      []query
+	authors      []string
 	publications []string
 }
 
@@ -41,8 +42,8 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 	var proc procSearchConfig
 	var err error
 
-	proc.queries = make([]query, len(s.Regexps) + len(s.Terms))
-	for i, pattern := range(s.Regexps) {
+	proc.queries = make([]query, len(s.Regexps)+len(s.Terms))
+	for i, pattern := range s.Regexps {
 		Verbosef("Compiling regexp pattern \"%s\"\n", pattern)
 		proc.queries[i].regexp, err = regexp.Compile(pattern)
 		if err != nil {
@@ -53,7 +54,7 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 
 	// Build a simple regular expressions from search terms
 	r := len(s.Regexps)
-	for i, term := range(s.Terms) {
+	for i, term := range s.Terms {
 		// Strip text that won't be present in our minified text files
 		t := reNonAlnumSpace.ReplaceAllString(strings.ToLower(term), "")
 
@@ -61,7 +62,7 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 		t = reExtraSpace.ReplaceAllString(t, " ")
 
 		// Match only complete words, delimited by whitespace or line endings
-		pattern := "(^| )"+t+"(es|s)?( |$)"
+		pattern := "(^| )" + t + "(es|s)?( |$)"
 
 		Verbosef("Converting search term \"%s\" -> regexp{%s}\n", term, pattern)
 		proc.queries[r+i].regexp, err = regexp.Compile(pattern)
@@ -72,7 +73,7 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 	}
 
 	proc.authors = make([]string, len(s.Authors))
-	for i, author := range(s.Authors) {
+	for i, author := range s.Authors {
 		a := Reduce(author)
 		if len(a) == 0 {
 			return procSearchConfig{}, fmt.Errorf("Invalid author name: %s\n", author)
@@ -81,7 +82,7 @@ func (s *SearchConfig) process() (procSearchConfig, error) {
 	}
 
 	proc.publications = make([]string, len(s.Publications))
-	for i, pub := range(s.Publications) {
+	for i, pub := range s.Publications {
 		p := Reduce(pub)
 		if len(p) == 0 {
 			return procSearchConfig{}, fmt.Errorf("Invalid publication name: %s\n", pub)

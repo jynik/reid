@@ -1,9 +1,9 @@
 /*
-* Copyright (c) 2017 Jon Szymaniak <jon.szymaniak@gmail.com>
-* SPDX License Identifier: GPL-3.0
-*
-* A reid project file
-*/
+ * Copyright (c) 2017-2018 Jon Szymaniak <jon.szymaniak@gmail.com>
+ * SPDX License Identifier: GPL-3.0
+ *
+ * A reid project file
+ */
 
 package reid
 
@@ -25,7 +25,7 @@ import (
 const shortMiniTextThreshold = 2000
 
 type Project struct {
-	filename	string
+	filename string
 
 	CreatedAt   string
 	ReidVersion string
@@ -165,10 +165,10 @@ func (p *Project) scan() (*Project, error) {
 		if len(entry.MiniFiles) != 0 {
 			for _, f := range entry.MiniFiles {
 				if fileInfo, err := os.Stat(f); err == nil {
-				    if fileInfo.Size() <= shortMiniTextThreshold {
-					Warn("Minified file is suspiciously small. Consider forcing a reconversion using OCR for:")
-					Warnf(" Title: %s  / Hash: %s\n", entry.Record.Title, entry.Hash)
-				    }
+					if fileInfo.Size() <= shortMiniTextThreshold {
+						Warn("Minified file is suspiciously small. Consider forcing a reconversion using OCR for:")
+						Warnf(" Title: %s  / Hash: %s\n", entry.Record.Title, entry.Hash)
+					}
 				}
 			}
 		}

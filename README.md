@@ -320,6 +320,7 @@ work with the data programatically.
 
 For more information, run `reid-search --help`.
 
+[Regular Expression]: https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
 
 # Build
 

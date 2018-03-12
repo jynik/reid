@@ -8,7 +8,7 @@ phrases. The `reid` project currently consists of the following programs:
 EndNote. This may be used to display information contained in the XML file, or
 to convert the XML into a "reid project" file that the remainder of the `reid`
 tools can work with.
-* `reid-convert` iterates through all, or a specified subset, records stored in
+* `reid-convert` iterates through all, or a specified subset, of records stored in
 a "reid project" file and converts their associated PDFs into "minified"
 text files, which can then be searched with the `reid-search` program. Upon
 successfully converting files, the "reid project" file is updated to reflect
@@ -18,9 +18,9 @@ more terms specified on the command line. Simple terms and phrases can be
 specified, in addition to [Regular Expressions]. The search can be performed
 over all files contained in the "reid project" file, or limited by year range,
 author, or publication. For each matched input term, this program outputs
-the number of occurrences observed in corresponding source material. By default,The
-information about matches are printed to the terminal. However, format of this
-output can be changed to CSV or JSON, and the data can be written to a file.
+the number of occurrences observed in corresponding source material. By default,
+the information about matches are printed to the terminal. However, format of
+this output can be changed to CSV or JSON, and the data can be written to a file.
 
 [EndNote]: http://endnote.com/
 [Regular Expressions]: https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts
@@ -146,6 +146,7 @@ this "minification" consists of:
 * Removing references, URLs, and punctuation.
 * Converting any remaining white space to a single space (" ").
 * Converting text to lower-case. (As a result, searches are case-insensitive.)
+* Removing quotation marks
 
 Currently, all of the above is performed by default. If this interferes
 with your ability to search a document, please submit a feature request
@@ -243,12 +244,12 @@ Query: regexp{boot ?loader}
   Author(s): Goudaspeed, T. / Lidrey, S. / Grandious, J. / Ritz, J.
   Title: Cross-Platform ROP Gadget Polyglots for ARM, MIPS, and PIC32
 
-Query: regexp{boot ?loader}
-  Occurrences: 9
+Query: boot loader
+  Occurrences: 42
   Year: 1996
-  Publication:
-  Author(s): Goodspeed, T. / Ridley, S. / Grand, J. / Fitz
-  Title: Cross-Platform ROP Gadget Polyglots for ARM, MIPS, and PIC32
+  Publication: Real-time and Embedded Systems
+  Author(s): Smith, J.
+  Title: Modern Boot Loader Design
 
 Query: regexp{boot ?loader}
   Occurrences: 13
